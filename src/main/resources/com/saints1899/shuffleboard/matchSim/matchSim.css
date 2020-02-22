@@ -1,0 +1,20 @@
+.root {
+    -fx-background-color: gray;
+}
+
+.button {
+    -fx-background-color: blue
+
+}
+#moveRight {
+    -fx-background-color: yellow
+}
+
+#locationTitle {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+#locationValue {
+    -fx-font-size: 24
+}

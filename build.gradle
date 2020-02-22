@@ -1,0 +1,66 @@
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+    id 'java-library'
+    id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+ext.FRC_YEAR = "2020"
+
+repositories {
+    mavenCentral()
+    maven {
+        url wpilibRepositories.mavenRemoteReleaseUrl
+    }
+}
+
+javafx {
+    modules = [ 'javafx.controls' ]
+    configuration = 'compileOnly'
+}
+
+dependencies {
+    compileOnly 'edu.wpi.first.shuffleboard:api:2020.+'
+    // Installed FRC Shuffleboard jar.  Keep this so it knows how to resolve
+    // the shuffleboard dependencies
+    api getShuffleboardJar()
+
+    // Han Solo Gauge library dependency
+    compile 'eu.hansolo:Medusa:11.2'
+}
+
+def getFrcToolsRoot ()
+{
+    if (OperatingSystem.current ().isWindows () )
+    {
+        String pubFolder = System.getenv("PUBLIC")
+        // if (pubFolder == null)
+        // {
+        //     pubFolder = "C:\\Users\\Public\\wpilib"
+        // }
+
+        return pubFolder + "/wpilib/${FRC_YEAR}" 
+
+    }
+    else
+    {
+        return System.getProperty ("user.home") + "/frc${FRC_YEAR}"
+    }
+} 
+
+def getDeployDest ()
+{
+    return System.getProperty ("user.home") + "/Shuffleboard/plugins"
+}
+
+def getShuffleboardJar ()
+{
+    return files(getFrcToolsRoot() + "/tools/shuffleboard.jar")
+}
+
+task deployWidget (type: Copy, group: "Shuffleboard Widget", description: "Copy the widget jar into the Shuffleboard plugin folder", dependsOn: "build") {
+    from "build/libs"
+    into getDeployDest()
+    include "*.jar"
+}
